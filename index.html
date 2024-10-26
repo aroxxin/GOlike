@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LikeGo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px; /* Adjusted for logo placement */
+            background-image: url('https://img.freepik.com/darmowe-wektory/pusta-niebieska-ramka-kwiatowy_53876-97538.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            transition: background-color 0.5s; /* Smooth transition */
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #fff;  /* White border */
+            border-radius: 25px;  /* Rounded corners */
+            background-color: rgba(255, 255, 255, 0.8);  /* Slightly transparent white background */
+            color: #333;  /* Dark text for readability */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input[type="text"]:focus {
+            outline: none;  /* Remove default outline */
+            border-color: #007BFF;  /* Blue border on focus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);  /* Subtle glow effect */
+        }
+        input[type="submit"] {
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;  /* Rounded corners */
+            background-color: #28a745;  /* Green background color */
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-left: 10px;  /* Space between input and button */
+        }
+        input[type="submit"]:hover {
+            background-color: #218838;  /* Darker green on hover */
+            transform: scale(1.05);  /* Slightly enlarge button on hover */
+        }
+        .settings {
+            margin-top: 20px;
+            display: inline-block;
+            cursor: pointer;
+            background-color: #007BFF; /* Blue background for settings */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px; /* Rounded corners */
+            transition: background-color 0.3s;
+        }
+        .settings:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.7); /* Black with opacity */
+        }
+        .modal-content {
+            background-color: white; /* White background */
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 400px; /* Could be more or less, depending on screen size */
+            color: black;
+        }
+        .modal-header, .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header {
+            border-bottom: 1px solid #888;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Button styles for background change */
+        .bg-button {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+        /* Colors for buttons */
+        .bg-lightblue { background-color: lightblue; }
+        .bg-lightgreen { background-color: lightgreen; }
+        .bg-lightpink { background-color: lightpink; }
+        /* Shortcut List */
+        .shortcut-list {
+            margin: 15px 0;
+            max-height: 150px; /* Set a max height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            padding: 10px;
+            border: 1px solid #888;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .shortcut-item {
+            margin-bottom: 5px; /* Space between shortcuts */
+            color: blue; /* Blue text for links */
+            cursor: pointer; /* Pointer cursor on hover */
+            text-decoration: underline; /* Underline for links */
+        }
+        .shortcut-item:hover {
+            color: darkblue; /* Darker blue on hover */
+        }
+        @media (max-width: 600px) {
+            body {
+                margin-top: 20px;  /* Adjust margin for smaller screens */
+            }
+            input[type="text"] {
+                width: 80%;  /* Full width on mobile */
+            }
+        }
+    </style>
+    <script>
+        let shortcuts = []; // Array to store shortcuts
+
+        function toggleSettings() {
+            const modal = document.getElementById('settings-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+            displayShortcuts(); // Display shortcuts whenever settings modal is opened
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('settings-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        function changeBackgroundColor(color) {
+            document.body.style.backgroundColor = color;
+        }
+
+        function setDefaultWebsite() {
+            const url = document.getElementById('website-input').value;
+            alert(`Domyślna strona internetowa ustawiona na: ${url}`);
+            // Here you could add functionality to actually navigate to this URL or save it in a settings file
+        }
+
+        function createShortcut() {
+            const shortcutName = document.getElementById('shortcut-input').value;
+            const shortcutURL = document.getElementById('shortcut-url-input').value;
+
+            if (shortcutName && shortcutURL) {
+                shortcuts.push({ name: shortcutName, url: shortcutURL }); // Add shortcut to array
+                document.getElementById('shortcut-input').value = ''; // Clear input field
+                document.getElementById('shortcut-url-input').value = ''; // Clear URL input field
+                displayShortcuts(); // Refresh displayed shortcuts
+            } else {
+                alert('Proszę podać zarówno nazwę skrótu, jak i URL.'); // Alert if inputs are empty
+            }
+        }
+
+        function displayShortcuts() {
+            const shortcutList = document.getElementById('shortcut-list');
+            shortcutList.innerHTML = ''; // Clear previous shortcuts
+
+            shortcuts.forEach(shortcut => {
+                const shortcutItem = document.createElement('div');
+                shortcutItem.textContent = shortcut.name;
+                shortcutItem.classList.add('shortcut-item');
+                shortcutItem.onclick = () => window.open(shortcut.url, '_blank'); // Redirect to URL on click
+                shortcutList.appendChild(shortcutItem);
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+    <h1>LikeGo </h1>
+	<h2>Szukaj informacje</h2>
+    <div>
+        <img src="https://tse3.mm.bing.net/th?id=OIG4._klkUJN97DeICmhVv2Yx&pid=ImgGn" alt="A relevant image related to the search" style="max-width: 10%; height: auto; margin-bottom: 20px;">
+    </div>
+    <div class="shortcut-list" id="shortcut-list"></div> <!-- Display shortcuts here -->
+
+    <main>
+        <form action="{{ url_for('search') }}" method="post">
+            <input type="text" name="query" placeholder="Wpisz pytanie..." required aria-label="Wyszukiwanie pytania">
+            <input type="submit" value="Szukaj" aria-label="Szukaj">
+        </form>
+        <div class="settings" onclick="toggleSettings()">Ustawienia</div>
+    </main>
+
+    <!-- Modal for Settings -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ustawienia</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label>Wybierz tło:</label><br>
+                <button class="bg-button bg-lightblue" onclick="changeBackgroundColor('lightblue')">Jasnoniebieski</button>
+                <button class="bg-button bg-lightgreen" onclick="changeBackgroundColor('lightgreen')">Jasnozielony</button>
+                <button class="bg-button bg-lightpink" onclick="changeBackgroundColor('lightpink')">Jasnoróżowy</button>
+                <br><br>
+                <label for="website-input">Domyślna strona internetowa:</label>
+                <input type="text" id="website-input" placeholder="Wprowadź URL">
+                <input type="submit" value="Ustaw" onclick="setDefaultWebsite()"><br><br>
+                <label for="shortcut-input">Nazwa skrótu:</label>
+                <input type="text" id="shortcut-input" placeholder="Wprowadź nazwę skrótu">
+                <label for="shortcut-url-input">URL skrótu:</label>
+                <input type="text" id="shortcut-url-input" placeholder="Wprowadź URL skrótu">
+                <input type="submit" value="Dodaj" onclick="createShortcut()">
+                <div id="shortcut-list"></div> <!-- Display shortcuts here -->
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
