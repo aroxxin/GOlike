@@ -116,18 +116,29 @@
     <img src="logo.png" alt="LikeGo Logo" class="logo"> <!-- Logo pod skrótami -->
 
     <div class="search-container">
-        <input type="text" placeholder="Wyszukaj...">
-        <input type="submit" value="Szukaj">
+        <input type="text" id="search-input" placeholder="Wyszukaj...">
+        <input type="submit" value="Szukaj" onclick="search()">
     </div>
 
     <script>
         function addCustomShortcut() {
             const shortcutLetter = prompt("Wprowadź literę skrótu:");
-            if (shortcutLetter) {
-                const shortcutDiv = document.createElement('div');
+            const shortcutURL = prompt("Wprowadź adres URL skrótu:");
+            if (shortcutLetter && shortcutURL) {
+                const shortcutDiv = document.createElement('a');
                 shortcutDiv.className = 'shortcut';
                 shortcutDiv.innerText = shortcutLetter.toUpperCase();
+                shortcutDiv.href = shortcutURL; // Make it a link
+                shortcutDiv.target = '_blank'; // Open in a new tab
                 document.querySelector('.shortcut-container').appendChild(shortcutDiv);
+            }
+        }
+
+        function search() {
+            const query = document.getElementById('search-input').value;
+            if (query) {
+                const googleSearchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                window.location.href = googleSearchURL;
             }
         }
     </script>
