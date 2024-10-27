@@ -15,6 +15,12 @@
             background: linear-gradient(135deg, #a8e6cf, #dcedc1, #ffab91);
             animation: backgroundColorChange 10s ease infinite;
             font-family: Arial, sans-serif;
+            opacity: 0; /* Zaczynamy od niewidoczności */
+            animation: fadeIn 1s forwards; /* Animacja wejścia */
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
 
         @keyframes backgroundColorChange {
@@ -40,17 +46,31 @@
             background-color: #a8e6cf;
             color: white;
             font-size: 24px;
-            animation: shortcutColorChange 3s ease infinite;
+            animation: shortcutSlideIn 0.5s forwards; /* Animacja wejścia skrótów */
+            transform: translateY(-20px); /* Zaczynamy z przesunięciem */
         }
 
-        @keyframes shortcutColorChange {
-            0%, 100% { background-color: #a8e6cf; }
-            50% { background-color: #dcedc1; }
+        @keyframes shortcutSlideIn {
+            to { transform: translateY(0); }
+        }
+
+        .shortcut:hover {
+            background-color: #007BFF; /* Zmiana koloru tła */
+            transform: rotate(360deg); /* Obrót */
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Akcentujący cień */
+            transition: transform 0.3s ease; /* Płynne przejście */
         }
 
         .logo {
             width: 100px; /* Dostosuj rozmiar logo */
             margin-top: 20px; /* Odstęp od skrótów */
+            opacity: 0; /* Zaczynamy od niewidoczności */
+            animation: logoFadeIn 1s forwards; /* Animacja wejścia logo */
+        }
+
+        @keyframes logoFadeIn {
+            from { transform: scale(0.5); opacity: 0; } /* Powiększenie na wejściu */
+            to { transform: scale(1); opacity: 1; }
         }
 
         .search-container {
@@ -77,11 +97,16 @@
             color: white;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.1s;
         }
 
         input[type="submit"]:hover {
             background-color: #45a049;
+            transform: scale(1.05); /* Powiększenie */
+        }
+
+        input[type="submit"]:active {
+            transform: translateY(2px); /* Skok w dół przy kliknięciu */
         }
 
         .arcade-button {
@@ -95,50 +120,105 @@
             color: white;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.1s;
+            opacity: 0; /* Zaczynamy od niewidoczności */
+            animation: arcadeButtonSlideIn 1s forwards; /* Animacja przycisku */
         }
 
-        .arcade-button:hover {
-            background-color: #0056b3;
+        @keyframes arcadeButtonSlideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .added {
+            background-color: #FFD700; /* Złoty kolor na 1 sekundę */
+            animation: pulse 0.5s; /* Pulsujący efekt */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .hidden {
+            display: none; /* Ukryj element */
         }
     </style>
 </head>
 <body>
     <button class="arcade-button" onclick="window.location.href='arcade.html'">Arcade</button> <!-- Przycisk Arcade -->
 
-    <div class="shortcut-container">
-        <div class="shortcut">Y</div> <!-- YouTube -->
-        <div class="shortcut">W</div> <!-- Wikipedia -->
-        <div class="shortcut">F</div> <!-- Facebook -->
+    <div class="shortcut-container" id="shortcutContainer">
+        <div class="shortcut" onclick="openLink('https://www.youtube.com')">Y</div> <!-- YouTube -->
+        <div class="shortcut" onclick="openLink('https://www.wikipedia.org')">W</div> <!-- Wikipedia -->
+        <div class="shortcut" onclick="openLink('https://www.facebook.com')">F</div> <!-- Facebook -->
         <div class="shortcut" onclick="addCustomShortcut()">+</div> <!-- Przycisk dodawania skrótu -->
     </div>
 
     <img src="logo.png" alt="LikeGo Logo" class="logo"> <!-- Logo pod skrótami -->
 
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Wyszukaj...">
-        <input type="submit" value="Szukaj" onclick="search()">
+        <input type="text" id="searchInput" placeholder="Wyszukaj..." oninput="filterShortcuts()">
+        <input type="submit" value="Szukaj" onclick="performSearch()">
     </div>
 
     <script>
+        const shortcuts = [
+            { letter: 'Y', url: 'https://www.youtube.com' },
+            { letter: 'W', url: 'https://www.wikipedia.org' },
+            { letter: 'F', url: 'https://www.facebook.com' }
+        ];
+
+        function openLink(url) {
+            window.open(url, '_blank'); // Otwórz skrót w nowej karcie
+        }
+
         function addCustomShortcut() {
             const shortcutLetter = prompt("Wprowadź literę skrótu:");
-            const shortcutURL = prompt("Wprowadź adres URL skrótu:");
-            if (shortcutLetter && shortcutURL) {
-                const shortcutDiv = document.createElement('a');
-                shortcutDiv.className = 'shortcut';
+            if (shortcutLetter) {
+                const shortcutDiv = document.createElement('div');
+                shortcutDiv.className = 'shortcut added'; // Dodaj klasę do animacji
                 shortcutDiv.innerText = shortcutLetter.toUpperCase();
-                shortcutDiv.href = shortcutURL; // Make it a link
-                shortcutDiv.target = '_blank'; // Open in a new tab
+                shortcutDiv.onclick = function() {
+                    openLink('https://example.com/' + shortcutLetter.toLowerCase()); // Przykładowy link
+                };
                 document.querySelector('.shortcut-container').appendChild(shortcutDiv);
+
+                // Usuwanie animacji po 1 sekundzie
+                setTimeout(() => {
+                    shortcutDiv.classList.remove('added');
+                }, 1000);
+
+                // Dodaj nowy skrót do tablicy
+                shortcuts.push({ letter: shortcutLetter.toUpperCase(), url: 'https://example.com/' + shortcutLetter.toLowerCase() });
             }
         }
 
-        function search() {
-            const query = document.getElementById('search-input').value;
+        function filterShortcuts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const shortcutContainer = document.getElementById('shortcutContainer');
+            const shortcutDivs = shortcutContainer.children;
+
+            // Ukryj wszystkie skróty
+            Array.from(shortcutDivs).forEach(shortcut => {
+                const letter = shortcut.innerText.toLowerCase();
+                if (letter.includes(query)) {
+                    shortcut.classList.remove('hidden');
+                } else {
+                    shortcut.classList.add('hidden');
+                }
+            });
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value;
             if (query) {
-                const googleSearchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-                window.location.href = googleSearchURL;
+                // Otwórz Google z wyszukiwanym zapytaniem
+                const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                window.open(googleSearchUrl, '_blank');
+            } else {
+                alert("Proszę wprowadzić zapytanie do wyszukiwania.");
             }
         }
     </script>
