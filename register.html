@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Rejestracja - Arcade Studios</title>
+</head>
+<body>
+    <header>
+        <h1>Rejestracja w Arcade Studios</h1>
+    </header>
+    <main>
+        <form action="/register" method="POST">
+            <label for="username">Nazwa użytkownika:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Hasło:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Zarejestruj się</button>
+        </form>
+        <p>Masz już konto? <a href="login.html">Zaloguj się</a></p>
+    </main>
+</body>
+</html>

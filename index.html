@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LikeGo - Wyszukiwanie</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #a8e6cf, #dcedc1, #ffab91);
+            animation: backgroundColorChange 10s ease infinite;
+            font-family: Arial, sans-serif;
+        }
+
+        @keyframes backgroundColorChange {
+            0% { background-color: #a8e6cf; }
+            33% { background-color: #dcedc1; }
+            66% { background-color: #ffab91; }
+            100% { background-color: #a8e6cf; }
+        }
+
+        .shortcut-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 60px; /* Odstęp od górnej części ekranu */
+        }
+
+        .shortcut {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #a8e6cf;
+            color: white;
+            font-size: 24px;
+            animation: shortcutColorChange 3s ease infinite;
+        }
+
+        @keyframes shortcutColorChange {
+            0%, 100% { background-color: #a8e6cf; }
+            50% { background-color: #dcedc1; }
+        }
+
+        .logo {
+            width: 100px; /* Dostosuj rozmiar logo */
+            margin-top: 20px; /* Odstęp od skrótów */
+        }
+
+        .search-container {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .arcade-button {
+            position: absolute; /* Umieść przycisk w prawym górnym rogu */
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .arcade-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <button class="arcade-button" onclick="window.location.href='arcade.html'">Arcade</button> <!-- Przycisk Arcade -->
+
+    <div class="shortcut-container">
+        <div class="shortcut">Y</div> <!-- YouTube -->
+        <div class="shortcut">W</div> <!-- Wikipedia -->
+        <div class="shortcut">F</div> <!-- Facebook -->
+        <div class="shortcut" onclick="addCustomShortcut()">+</div> <!-- Przycisk dodawania skrótu -->
+    </div>
+
+    <img src="logo.png" alt="LikeGo Logo" class="logo"> <!-- Logo pod skrótami -->
+
+    <div class="search-container">
+        <input type="text" placeholder="Wyszukaj...">
+        <input type="submit" value="Szukaj">
+    </div>
+
+    <script>
+        function addCustomShortcut() {
+            const shortcutLetter = prompt("Wprowadź literę skrótu:");
+            if (shortcutLetter) {
+                const shortcutDiv = document.createElement('div');
+                shortcutDiv.className = 'shortcut';
+                shortcutDiv.innerText = shortcutLetter.toUpperCase();
+                document.querySelector('.shortcut-container').appendChild(shortcutDiv);
+            }
+        }
+    </script>
+</body>
+</html>
